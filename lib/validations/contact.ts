@@ -38,3 +38,14 @@ export const contactSchema = z.object({
 });
 
 export type ContactFormData = z.infer<typeof contactSchema>;
+
+function onlyDigits(value: string): string {
+  return value.replace(/\D/g, "");
+}
+
+export function sanitizeContactFormData(data: ContactFormData): ContactFormData {
+  return {
+    ...data,
+    cpf: onlyDigits(data.cpf),
+  };
+}

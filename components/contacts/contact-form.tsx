@@ -1,10 +1,11 @@
 "use client";
 
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import {
   contactSchema,
+  sanitizeContactFormData,
   type ContactFormData,
 } from "@/lib/validations/contact";
 
@@ -15,6 +16,21 @@ type ContactFormProps = {
   submitLabel: string;
 };
 
+function formatCpf(value: string): string {
+  const digits = value.replace(/\D/g, "").slice(0, 11);
+  const parts = [
+    digits.slice(0, 3),
+    digits.slice(3, 6),
+    digits.slice(6, 9),
+    digits.slice(9, 11),
+  ];
+
+  if (digits.length <= 3) return parts[0];
+  if (digits.length <= 6) return `${parts[0]}.${parts[1]}`;
+  if (digits.length <= 9) return `${parts[0]}.${parts[1]}.${parts[2]}`;
+  return `${parts[0]}.${parts[1]}.${parts[2]}-${parts[3]}`;
+}
+
 export function ContactForm({
   defaultValues,
   onSubmit,
@@ -22,28 +38,32 @@ export function ContactForm({
   submitLabel,
 }: ContactFormProps) {
   const {
+    control,
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<ContactFormData>({
     resolver: zodResolver(contactSchema),
     defaultValues: {
-      name: "",
-      cpf: "",
-      phone: "",
-      cep: "",
-      street: "",
-      number: "",
-      district: "",
-      city: "",
-      state: "",
-      complement: "",
-      ...defaultValues,
+      name: defaultValues?.name ?? "",
+      cpf: formatCpf(defaultValues?.cpf ?? ""),
+      phone: defaultValues?.phone ?? "",
+      cep: defaultValues?.cep ?? "",
+      street: defaultValues?.street ?? "",
+      number: defaultValues?.number ?? "",
+      district: defaultValues?.district ?? "",
+      city: defaultValues?.city ?? "",
+      state: defaultValues?.state ?? "",
+      complement: defaultValues?.complement ?? "",
     },
   });
 
+  function handleFormSubmit(data: ContactFormData) {
+    onSubmit(sanitizeContactFormData(data));
+  }
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
       {/* Nome */}
       <div>
         <label htmlFor="name" className="block text-sm font-medium mb-1">
@@ -67,13 +87,22 @@ export function ContactForm({
           <label htmlFor="cpf" className="block text-sm font-medium mb-1">
             CPF *
           </label>
-          <input
-            id="cpf"
-            type="text"
-            {...register("cpf")}
-            className="w-full rounded-lg border border-input px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
-            placeholder="00000000000"
-            maxLength={11}
+          <Controller
+            name="cpf"
+            control={control}
+            render={({ field }) => (
+              <input
+                id="cpf"
+                type="text"
+                value={formatCpf(field.value ?? "")}
+                onChange={(event) => field.onChange(formatCpf(event.target.value))}
+                onBlur={field.onBlur}
+                ref={field.ref}
+                className="w-full rounded-lg border border-input px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
+                placeholder="000.000.000-00"
+                maxLength={14}
+              />
+            )}
           />
           {errors.cpf && (
             <p className="mt-1 text-xs text-destructive">{errors.cpf.message}</p>
