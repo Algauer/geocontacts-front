@@ -3,6 +3,7 @@
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
+import { formatCpf, formatPhone } from "@/lib/contact-format";
 import {
   contactSchema,
   sanitizeContactFormData,
@@ -15,21 +16,6 @@ type ContactFormProps = {
   isPending: boolean;
   submitLabel: string;
 };
-
-function formatCpf(value: string): string {
-  const digits = value.replace(/\D/g, "").slice(0, 11);
-  const parts = [
-    digits.slice(0, 3),
-    digits.slice(3, 6),
-    digits.slice(6, 9),
-    digits.slice(9, 11),
-  ];
-
-  if (digits.length <= 3) return parts[0];
-  if (digits.length <= 6) return `${parts[0]}.${parts[1]}`;
-  if (digits.length <= 9) return `${parts[0]}.${parts[1]}.${parts[2]}`;
-  return `${parts[0]}.${parts[1]}.${parts[2]}-${parts[3]}`;
-}
 
 export function ContactForm({
   defaultValues,
@@ -47,7 +33,7 @@ export function ContactForm({
     defaultValues: {
       name: defaultValues?.name ?? "",
       cpf: formatCpf(defaultValues?.cpf ?? ""),
-      phone: defaultValues?.phone ?? "",
+      phone: formatPhone(defaultValues?.phone ?? ""),
       cep: defaultValues?.cep ?? "",
       street: defaultValues?.street ?? "",
       number: defaultValues?.number ?? "",
@@ -113,13 +99,24 @@ export function ContactForm({
           <label htmlFor="phone" className="block text-sm font-medium mb-1">
             Telefone *
           </label>
-          <input
-            id="phone"
-            type="text"
-            {...register("phone")}
-            className="w-full rounded-lg border border-input px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
-            placeholder="11999998888"
-            maxLength={11}
+          <Controller
+            name="phone"
+            control={control}
+            render={({ field }) => (
+              <input
+                id="phone"
+                type="text"
+                value={formatPhone(field.value ?? "")}
+                onChange={(event) =>
+                  field.onChange(formatPhone(event.target.value))
+                }
+                onBlur={field.onBlur}
+                ref={field.ref}
+                className="w-full rounded-lg border border-input px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
+                placeholder="(11) 99999-8888"
+                maxLength={15}
+              />
+            )}
           />
           {errors.phone && (
             <p className="mt-1 text-xs text-destructive">

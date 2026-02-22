@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { MapPin, Phone, Pencil, Trash2, Loader2 } from "lucide-react";
+import { formatCpf, formatPhone } from "@/lib/contact-format";
 import type { Contact } from "@/lib/contacts";
 import { useDeleteContact } from "@/hooks/use-contacts";
 
@@ -24,10 +25,8 @@ export function ContactCard({ contact }: ContactCardProps) {
     });
   }
 
-  const cpfFormatted = contact.cpf.replace(
-    /(\d{3})(\d{3})(\d{3})(\d{2})/,
-    "$1.$2.$3-$4"
-  );
+  const cpfFormatted = formatCpf(contact.cpf);
+  const phoneFormatted = formatPhone(contact.phone);
 
   return (
     <div className="rounded-lg border border-border bg-white p-4 hover:shadow-sm transition-shadow">
@@ -72,7 +71,7 @@ export function ContactCard({ contact }: ContactCardProps) {
       <div className="mt-3 space-y-1.5 text-sm text-muted-foreground">
         <div className="flex items-center gap-2">
           <Phone size={14} className="shrink-0" />
-          <span>{contact.phone}</span>
+          <span>{phoneFormatted}</span>
         </div>
         <div className="flex items-start gap-2">
           <MapPin size={14} className="shrink-0 mt-0.5" />

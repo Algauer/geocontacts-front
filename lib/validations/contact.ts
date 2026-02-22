@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { onlyDigits } from "@/lib/contact-format";
 
 function isValidCpf(cpf: string): boolean {
   const digits = cpf.replace(/\D/g, "");
@@ -24,7 +25,13 @@ export const contactSchema = z.object({
     .string()
     .min(1, "CPF obrigatorio")
     .refine((val) => isValidCpf(val), { message: "CPF invalido" }),
-  phone: z.string().min(1, "Telefone obrigatorio"),
+  phone: z
+    .string()
+    .min(1, "Telefone obrigatorio")
+    .refine((val) => {
+      const digits = onlyDigits(val);
+      return digits.length === 10 || digits.length === 11;
+    }, { message: "Telefone invalido" }),
   cep: z.string().min(1, "CEP obrigatorio"),
   street: z.string().min(1, "Rua obrigatoria"),
   number: z.string().min(1, "Numero obrigatorio"),
@@ -39,13 +46,10 @@ export const contactSchema = z.object({
 
 export type ContactFormData = z.infer<typeof contactSchema>;
 
-function onlyDigits(value: string): string {
-  return value.replace(/\D/g, "");
-}
-
 export function sanitizeContactFormData(data: ContactFormData): ContactFormData {
   return {
     ...data,
     cpf: onlyDigits(data.cpf),
+    phone: onlyDigits(data.phone),
   };
 }
