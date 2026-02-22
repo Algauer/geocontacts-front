@@ -1,11 +1,86 @@
 "use client";
 
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { LayoutDashboard, MapPin, Users, Plus, LogOut } from "lucide-react";
 import { AuthGuard } from "@/components/auth-guard";
+import { useUser, useLogout } from "@/hooks/use-auth";
+
+function DashboardSidebar() {
+  const pathname = usePathname();
+  const { data: user } = useUser();
+  const logout = useLogout();
+  const items = [
+    { href: "/", label: "Dashboard", icon: LayoutDashboard },
+    { href: "/contacts", label: "Contatos", icon: Users },
+    { href: "/contacts/new", label: "Novo contato", icon: Plus },
+  ];
+
+  return (
+    <aside className="w-64 shrink-0 border-r border-border bg-white">
+      <div className="h-full flex flex-col">
+        <Link
+          href="/"
+          className="h-14 px-4 border-b border-border flex items-center gap-2 font-semibold text-primary"
+        >
+          <MapPin size={20} />
+          <span>GeoContacts</span>
+        </Link>
+
+        <nav className="p-3 space-y-1">
+          {items.map(({ href, label, icon: Icon }) => {
+            const isActive =
+              pathname === href ||
+              (href === "/contacts" && pathname.startsWith("/contacts/"));
+
+            return (
+              <Link
+                key={href}
+                href={href}
+                className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm transition-colors ${
+                  isActive
+                    ? "bg-primary/10 text-primary"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                }`}
+              >
+                <Icon size={16} />
+                <span>{label}</span>
+              </Link>
+            );
+          })}
+        </nav>
+
+        <div className="mt-auto border-t border-border p-3">
+          <p className="px-3 pb-2 text-xs text-muted-foreground truncate">
+            {user?.name}
+          </p>
+          <button
+            onClick={() => logout.mutate()}
+            disabled={logout.isPending}
+            className="w-full inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors disabled:opacity-50"
+          >
+            <LogOut size={15} />
+            <span>Sair</span>
+          </button>
+        </div>
+      </div>
+    </aside>
+  );
+}
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <AuthGuard>{children}</AuthGuard>;
+  return (
+    <AuthGuard>
+      <div className="min-h-screen bg-muted/30 flex">
+        <DashboardSidebar />
+        <main className="flex-1 px-4 sm:px-6 py-6">
+          {children}
+        </main>
+      </div>
+    </AuthGuard>
+  );
 }

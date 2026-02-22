@@ -1,27 +1,43 @@
 "use client";
 
-import { useUser, useLogout } from "@/hooks/use-auth";
-import { LogOut } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, Plus, Users } from "lucide-react";
 
-export default function DashboardPage() {
-  const { data: user } = useUser();
-  const logout = useLogout();
-
+export default function DashboardHomePage() {
   return (
-    <div className="flex min-h-screen items-center justify-center p-6">
-      <div className="text-center">
-        <h1 className="text-2xl font-bold mb-2">
-          Bem-vindo, {user?.name}!
-        </h1>
-        
-        <button
-          onClick={() => logout.mutate()}
-          disabled={logout.isPending}
-          className="inline-flex items-center gap-2 rounded-lg border border-border px-4 py-2 text-sm font-medium hover:bg-muted transition-colors disabled:opacity-50"
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Link
+          href="/contacts"
+          className="rounded-lg border border-border bg-white p-5 hover:shadow-sm transition-shadow"
         >
-          <LogOut size={16} />
-          Sair
-        </button>
+          <div className="flex items-center justify-between mb-3">
+            <Users className="text-primary" size={20} />
+            <ArrowRight size={16} className="text-muted-foreground" />
+          </div>
+          <h2 className="font-semibold text-foreground">Ver contatos</h2>
+          <p className="text-sm text-muted-foreground mt-1">
+            Lista, busca e edicao de contatos.
+          </p>
+        </Link>
+
+        <Link
+          href="/contacts/new"
+          className="rounded-lg border border-border bg-white p-5 hover:shadow-sm transition-shadow"
+        >
+          <div className="flex items-center justify-between mb-3">
+            <Plus className="text-primary" size={20} />
+            <ArrowRight size={16} className="text-muted-foreground" />
+          </div>
+          <h2 className="font-semibold text-foreground">Novo contato</h2>
+          <p className="text-sm text-muted-foreground mt-1">
+            Cadastre um novo contato com endereco completo.
+          </p>
+        </Link>
       </div>
     </div>
   );
