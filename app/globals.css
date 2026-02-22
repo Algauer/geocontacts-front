@@ -1,0 +1,20 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: var(--font-geist-sans);
+  --color-primary: #2563eb;
+  --color-primary-foreground: #ffffff;
+  --color-muted: #f1f5f9;
+  --color-muted-foreground: #64748b;
+  --color-border: #e2e8f0;
+  --color-input: #e2e8f0;
+  --color-background: #ffffff;
+  --color-foreground: #0f172a;
+  --color-destructive: #ef4444;
+  --color-destructive-foreground: #ffffff;
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-foreground);
+}
