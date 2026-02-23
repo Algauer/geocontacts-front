@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2, UserPlus } from "lucide-react";
 import { registerSchema, type RegisterData } from "@/lib/validations/auth";
 import { useRegister } from "@/hooks/use-auth";
+import { PasswordInput } from "@/components/ui/password-input";
 
 export default function RegisterPage() {
   const registerMutation = useRegister();
@@ -70,9 +71,8 @@ export default function RegisterPage() {
           <label htmlFor="password" className="block text-sm font-medium mb-1.5">
             Senha
           </label>
-          <input
+          <PasswordInput
             id="password"
-            type="password"
             autoComplete="new-password"
             placeholder="Minimo 8 caracteres"
             className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors"
@@ -90,9 +90,8 @@ export default function RegisterPage() {
           >
             Confirmar senha
           </label>
-          <input
+          <PasswordInput
             id="password_confirmation"
-            type="password"
             autoComplete="new-password"
             placeholder="Repita a senha"
             className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors"
@@ -128,3 +127,4 @@ export default function RegisterPage() {
     </div>
   );
 }
+

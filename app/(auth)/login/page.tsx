@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2, LogIn } from "lucide-react";
 import { loginSchema, type LoginData } from "@/lib/validations/auth";
 import { useLogin } from "@/hooks/use-auth";
+import { PasswordInput } from "@/components/ui/password-input";
 
 export default function LoginPage() {
   const login = useLogin();
@@ -61,9 +62,8 @@ export default function LoginPage() {
               Esqueceu a senha?
             </Link>
           </div>
-          <input
+          <PasswordInput
             id="password"
-            type="password"
             autoComplete="current-password"
             placeholder="••••••••"
             className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors"
@@ -107,3 +107,4 @@ export default function LoginPage() {
     </div>
   );
 }
+

@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2, KeyRound } from "lucide-react";
 import { resetPasswordSchema, type ResetPasswordData } from "@/lib/validations/auth";
 import { useResetPassword } from "@/hooks/use-auth";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Suspense } from "react";
 
 function ResetPasswordForm() {
@@ -48,9 +49,8 @@ function ResetPasswordForm() {
         <label htmlFor="password" className="block text-sm font-medium mb-1.5">
           Nova senha
         </label>
-        <input
+        <PasswordInput
           id="password"
-          type="password"
           autoComplete="new-password"
           placeholder="Minimo 8 caracteres"
           className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors"
@@ -70,9 +70,8 @@ function ResetPasswordForm() {
         >
           Confirmar nova senha
         </label>
-        <input
+        <PasswordInput
           id="password_confirmation"
-          type="password"
           autoComplete="new-password"
           placeholder="Repita a nova senha"
           className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors"
@@ -117,3 +116,4 @@ export default function ResetPasswordPage() {
     </div>
   );
 }
+

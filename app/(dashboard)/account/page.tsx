@@ -8,6 +8,7 @@ import {
   type DeleteAccountData,
 } from "@/lib/validations/auth";
 import { useDeleteAccount } from "@/hooks/use-auth";
+import { PasswordInput } from "@/components/ui/password-input";
 
 export default function AccountPage() {
   const deleteAccount = useDeleteAccount();
@@ -50,9 +51,8 @@ export default function AccountPage() {
             <label htmlFor="password" className="block text-sm font-medium mb-1.5">
               Confirme sua senha
             </label>
-            <input
+            <PasswordInput
               id="password"
-              type="password"
               autoComplete="current-password"
               placeholder="Digite sua senha"
               className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors"
@@ -82,3 +82,4 @@ export default function AccountPage() {
     </div>
   );
 }
+
