@@ -35,7 +35,7 @@ export default function DashboardHomePage() {
           </div>
           <h2 className="font-semibold text-foreground">Novo contato</h2>
           <p className="text-sm text-muted-foreground mt-1">
-            Cadastre um novo contato com endereco completo.
+            Cadastre um novo contato com endereço completo.
           </p>
         </Link>
       </div>

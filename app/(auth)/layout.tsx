@@ -13,7 +13,7 @@ export default function AuthLayout({
           <MapPin className="mx-auto mb-6" size={64} />
           <h1 className="text-4xl font-bold mb-3">GeoContacts</h1>
           <p className="text-lg opacity-90">
-            Gerencie seus contatos com endereco e localizacao no mapa.
+            Gerencie seus contatos com endereço e localizacao no mapa.
           </p>
         </div>
       </div>
