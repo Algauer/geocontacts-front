@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { MapPin, Phone, Pencil, Trash2, Loader2 } from "lucide-react";
-import { formatCpf, formatPhone } from "@/lib/contact-format";
+import { MapPin, Phone, Pencil, Trash2, Loader2, CalendarDays } from "lucide-react";
+import { formatCpf, formatPhone, formatContactCreatedAt } from "@/lib/contact-format";
 import type { Contact } from "@/lib/contacts";
 import { useDeleteContact } from "@/hooks/use-contacts";
 
@@ -28,6 +28,7 @@ export function ContactCard({ contact }: ContactCardProps) {
 
   const cpfFormatted = formatCpf(contact.cpf);
   const phoneFormatted = formatPhone(contact.phone);
+  const createdAtFormatted = formatContactCreatedAt(contact.created_at);
 
   return (
     <div className="rounded-lg border border-border bg-white p-4 hover:shadow-sm transition-shadow">
@@ -71,6 +72,10 @@ export function ContactCard({ contact }: ContactCardProps) {
       </div>
 
       <div className="mt-3 space-y-1.5 text-sm text-muted-foreground">
+        <div className="flex items-center gap-2">
+          <CalendarDays size={14} className="shrink-0" />
+          <span>Criado em {createdAtFormatted}</span>
+        </div>
         <div className="flex items-center gap-2">
           <Phone size={14} className="shrink-0" />
           <span>{phoneFormatted}</span>

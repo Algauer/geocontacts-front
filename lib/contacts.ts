@@ -35,13 +35,27 @@ type PaginatedResponse<T> = {
   };
 };
 
+export type ContactListParams = {
+  page?: number;
+  perPage?: number;
+  search?: string;
+  sortBy?: "name" | "cpf" | "created_at";
+  sortDir?: "asc" | "desc";
+};
+
 export async function listContacts(
-  page = 1,
-  search?: string
+  params: ContactListParams = {}
 ): Promise<PaginatedResponse<Contact>> {
-  const params = new URLSearchParams({ page: String(page) });
-  if (search) params.set("search", search);
-  return api<PaginatedResponse<Contact>>(`/contacts?${params}`);
+  const query = new URLSearchParams({
+    page: String(params.page ?? 1),
+    per_page: String(params.perPage ?? 15),
+    sort_by: params.sortBy ?? "name",
+    sort_dir: params.sortDir ?? "asc",
+  });
+
+  if (params.search) query.set("search", params.search);
+
+  return api<PaginatedResponse<Contact>>(`/contacts?${query.toString()}`);
 }
 
 export async function getContact(id: string): Promise<{ data: Contact }> {

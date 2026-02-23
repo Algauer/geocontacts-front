@@ -9,12 +9,13 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import * as contactsApi from "@/lib/contacts";
 import { ApiError } from "@/lib/api";
+import type { ContactListParams } from "@/lib/contacts";
 import type { ContactFormData } from "@/lib/validations/contact";
 
-export function useContacts(page = 1, search?: string) {
+export function useContacts(params: ContactListParams = {}) {
   return useQuery({
-    queryKey: ["contacts", { page, search }],
-    queryFn: () => contactsApi.listContacts(page, search),
+    queryKey: ["contacts", params],
+    queryFn: () => contactsApi.listContacts(params),
   });
 }
 

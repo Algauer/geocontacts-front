@@ -1,3 +1,6 @@
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+
 export function onlyDigits(value: string): string {
   return value.replace(/\D/g, "");
 }
@@ -26,4 +29,8 @@ export function formatPhone(value: string): string {
     return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`;
   }
   return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
+}
+
+export function formatContactCreatedAt(value: string): string {
+  return format(new Date(value), "dd/MM/yyyy 'as' HH:mm", { locale: ptBR });
 }
