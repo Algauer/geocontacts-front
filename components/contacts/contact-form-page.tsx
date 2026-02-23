@@ -63,7 +63,7 @@ export function ContactFormPage(props: ContactFormPageProps) {
       <div className="rounded-lg border border-border bg-white p-6">
         <ContactForm
           defaultValues={
-            isEditMode
+            isEditMode && contact
               ? {
                   name: contact.name,
                   cpf: contact.cpf,

@@ -3,7 +3,8 @@
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
-import { formatCpf, formatPhone } from "@/lib/contact-format";
+import { formatCpf, formatPhone, onlyDigits } from "@/lib/contact-format";
+import { useCepLookup } from "@/hooks/use-address";
 import {
   contactSchema,
   sanitizeContactFormData,
@@ -27,6 +28,7 @@ export function ContactForm({
     control,
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<ContactFormData>({
     resolver: zodResolver(contactSchema),
@@ -43,6 +45,22 @@ export function ContactForm({
       complement: defaultValues?.complement ?? "",
     },
   });
+
+  const { fetchAddress, isLoading: isCepLoading } = useCepLookup();
+
+  async function handleCepBlur(cepValue: string) {
+    const digits = onlyDigits(cepValue);
+    if (digits.length !== 8) return;
+
+    const address = await fetchAddress(digits);
+    if (!address) return;
+
+    if (address.logradouro) setValue("street", address.logradouro);
+    if (address.bairro) setValue("district", address.bairro);
+    if (address.localidade) setValue("city", address.localidade);
+    if (address.uf) setValue("state", address.uf);
+    if (address.complemento) setValue("complement", address.complemento);
+  }
 
   function handleFormSubmit(data: ContactFormData) {
     onSubmit(sanitizeContactFormData(data));
@@ -131,11 +149,19 @@ export function ContactForm({
         <div>
           <label htmlFor="cep" className="block text-sm font-medium mb-1">
             CEP *
+            {isCepLoading && (
+              <Loader2
+                className="inline-block ml-1 animate-spin text-primary"
+                size={12}
+              />
+            )}
           </label>
           <input
             id="cep"
             type="text"
-            {...register("cep")}
+            {...register("cep", {
+              onBlur: (e) => handleCepBlur(e.target.value),
+            })}
             className="w-full rounded-lg border border-input px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
             placeholder="01001000"
             maxLength={9}
