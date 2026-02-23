@@ -2,7 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, MapPin, Users, Plus, LogOut } from "lucide-react";
+import {
+  LayoutDashboard,
+  MapPin,
+  Users,
+  LogOut,
+  CircleUserRound,
+} from "lucide-react";
 import { AuthGuard } from "@/components/auth-guard";
 import { useUser, useLogout } from "@/hooks/use-auth";
 
@@ -13,8 +19,8 @@ function DashboardSidebar() {
   const items = [
     { href: "/", label: "Dashboard", icon: LayoutDashboard },
     { href: "/contacts", label: "Contatos", icon: Users },
-    { href: "/contacts/new", label: "Novo contato", icon: Plus },
   ];
+  const isAccountActive = pathname === "/account";
 
   return (
     <aside className="w-64 shrink-0 border-r border-border bg-white">
@@ -50,10 +56,29 @@ function DashboardSidebar() {
           })}
         </nav>
 
-        <div className="mt-auto border-t border-border p-3">
-          <p className="px-3 pb-2 text-xs text-muted-foreground truncate">
-            {user?.name}
-          </p>
+        <div className="mt-auto border-t border-border p-3 space-y-2">
+          <Link
+            href="/account"
+            className={`block rounded-lg border px-3 py-2 transition-colors ${
+              isAccountActive
+                ? "border-primary/30 bg-primary/5"
+                : "border-border bg-muted/30 hover:bg-muted/60"
+            }`}
+          >
+            <div className="flex items-center gap-2">
+              <CircleUserRound
+                size={18}
+                className={isAccountActive ? "text-primary" : "text-foreground"}
+              />
+              <div className="min-w-0">
+                <p className="text-xs text-muted-foreground">Minha conta</p>
+                <p className="text-sm font-medium text-foreground truncate">
+                  {user?.name}
+                </p>
+              </div>
+            </div>
+          </Link>
+
           <button
             onClick={() => logout.mutate()}
             disabled={logout.isPending}

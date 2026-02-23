@@ -4,6 +4,8 @@ import type {
   RegisterData,
   ForgotPasswordData,
   ResetPasswordData,
+  RestoreAccountData,
+  DeleteAccountData,
 } from "./validations/auth";
 
 export type User = {
@@ -68,4 +70,25 @@ export async function resetPassword(
 
 export async function getUser(): Promise<User> {
   return api<User>("/user");
+}
+
+export async function restoreAccount(
+  data: RestoreAccountData
+): Promise<AuthResponse> {
+  const response = await api<AuthResponse>("/auth/restore-account", {
+    method: "POST",
+    body: JSON.stringify(data),
+    skipAuth: true,
+  });
+
+  setToken(response.token);
+  return response;
+}
+
+export async function deleteAccount(data: DeleteAccountData): Promise<void> {
+  await api("/me", {
+    method: "DELETE",
+    body: JSON.stringify(data),
+  });
+  removeToken();
 }

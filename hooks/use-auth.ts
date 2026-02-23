@@ -11,6 +11,8 @@ import type {
   RegisterData,
   ForgotPasswordData,
   ResetPasswordData,
+  RestoreAccountData,
+  DeleteAccountData,
 } from "@/lib/validations/auth";
 
 export function useUser() {
@@ -118,6 +120,55 @@ export function useResetPassword() {
       } else {
         toast.error("Erro ao resetar senha. Tente novamente.");
       }
+    },
+  });
+}
+
+export function useRestoreAccount() {
+  const queryClient = useQueryClient();
+  const router = useRouter();
+
+  return useMutation({
+    mutationFn: (data: RestoreAccountData) => authApi.restoreAccount(data),
+    onSuccess: (response) => {
+      queryClient.setQueryData(["user"], response.data);
+      toast.success("Conta restaurada com sucesso!");
+      router.push("/");
+    },
+    onError: (error: Error) => {
+      if (error instanceof ApiError && error.status === 410) {
+        toast.error("Prazo de 7 dias expirado para restaurar esta conta.");
+        return;
+      }
+
+      if (error instanceof ApiError && error.status === 401) {
+        toast.error("Email ou senha invalidos.");
+        return;
+      }
+
+      toast.error("Erro ao restaurar conta. Tente novamente.");
+    },
+  });
+}
+
+export function useDeleteAccount() {
+  const queryClient = useQueryClient();
+  const router = useRouter();
+
+  return useMutation({
+    mutationFn: (data: DeleteAccountData) => authApi.deleteAccount(data),
+    onSuccess: () => {
+      queryClient.clear();
+      toast.success("Conta excluida. Voce pode restaurar em ate 7 dias.");
+      router.push("/restore-account");
+    },
+    onError: (error: Error) => {
+      if (error instanceof ApiError && error.status === 422) {
+        toast.error("Senha incorreta.");
+        return;
+      }
+
+      toast.error("Erro ao excluir conta. Tente novamente.");
     },
   });
 }

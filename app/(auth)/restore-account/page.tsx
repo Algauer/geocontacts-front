@@ -3,38 +3,49 @@
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2, LogIn } from "lucide-react";
-import { loginSchema, type LoginData } from "@/lib/validations/auth";
-import { useLogin } from "@/hooks/use-auth";
+import { ArrowLeft, Loader2, RotateCcw } from "lucide-react";
+import {
+  restoreAccountSchema,
+  type RestoreAccountData,
+} from "@/lib/validations/auth";
+import { useRestoreAccount } from "@/hooks/use-auth";
 
-export default function LoginPage() {
-  const login = useLogin();
+export default function RestoreAccountPage() {
+  const restoreAccount = useRestoreAccount();
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginData>({
-    resolver: zodResolver(loginSchema),
+  } = useForm<RestoreAccountData>({
+    resolver: zodResolver(restoreAccountSchema),
   });
 
-  function onSubmit(data: LoginData) {
-    login.mutate(data);
+  function onSubmit(data: RestoreAccountData) {
+    restoreAccount.mutate(data);
   }
 
   return (
     <div>
+      <Link
+        href="/login"
+        className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-6"
+      >
+        <ArrowLeft size={16} />
+        Voltar ao login
+      </Link>
+
       <div className="mb-8">
-        <h2 className="text-2xl font-bold">Entrar</h2>
+        <h2 className="text-2xl font-bold">Restaurar conta</h2>
         <p className="text-muted-foreground mt-1">
-          Acesse sua conta para gerenciar seus contatos.
+          Se sua conta foi excluida, voce pode restaurar em ate 7 dias.
         </p>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
           <label htmlFor="email" className="block text-sm font-medium mb-1.5">
-            Email
+            Email da conta
           </label>
           <input
             id="email"
@@ -50,60 +61,37 @@ export default function LoginPage() {
         </div>
 
         <div>
-          <div className="flex items-center justify-between mb-1.5">
-            <label htmlFor="password" className="block text-sm font-medium">
-              Senha
-            </label>
-            <Link
-              href="/forgot-password"
-              className="text-sm text-primary hover:underline"
-            >
-              Esqueceu a senha?
-            </Link>
-          </div>
+          <label htmlFor="password" className="block text-sm font-medium mb-1.5">
+            Senha
+          </label>
           <input
             id="password"
             type="password"
             autoComplete="current-password"
-            placeholder="••••••••"
+            placeholder="Sua senha atual"
             className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors"
             {...register("password")}
           />
           {errors.password && (
-            <p className="text-destructive text-sm mt-1">{errors.password.message}</p>
+            <p className="text-destructive text-sm mt-1">
+              {errors.password.message}
+            </p>
           )}
         </div>
 
         <button
           type="submit"
-          disabled={login.isPending}
+          disabled={restoreAccount.isPending}
           className="w-full flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
-          {login.isPending ? (
+          {restoreAccount.isPending ? (
             <Loader2 className="animate-spin" size={18} />
           ) : (
-            <LogIn size={18} />
+            <RotateCcw size={18} />
           )}
-          {login.isPending ? "Entrando..." : "Entrar"}
+          {restoreAccount.isPending ? "Restaurando..." : "Restaurar conta"}
         </button>
       </form>
-
-      <p className="text-center text-sm text-muted-foreground mt-6">
-        Nao tem uma conta?{" "}
-        <Link href="/register" className="text-primary font-medium hover:underline">
-          Criar conta
-        </Link>
-      </p>
-
-      <p className="text-center text-sm text-muted-foreground mt-2">
-        Excluiu a conta por engano?{" "}
-        <Link
-          href="/restore-account"
-          className="text-primary font-medium hover:underline"
-        >
-          Restaurar conta
-        </Link>
-      </p>
     </div>
   );
 }

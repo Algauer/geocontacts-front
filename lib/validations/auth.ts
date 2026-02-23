@@ -33,7 +33,18 @@ export const resetPasswordSchema = z
     path: ["password_confirmation"],
   });
 
+export const restoreAccountSchema = z.object({
+  email: z.string().email("Email invalido"),
+  password: z.string().min(1, "Senha obrigatoria"),
+});
+
+export const deleteAccountSchema = z.object({
+  password: z.string().min(1, "Senha obrigatoria"),
+});
+
 export type LoginData = z.infer<typeof loginSchema>;
 export type RegisterData = z.infer<typeof registerSchema>;
 export type ForgotPasswordData = z.infer<typeof forgotPasswordSchema>;
 export type ResetPasswordData = z.infer<typeof resetPasswordSchema>;
+export type RestoreAccountData = z.infer<typeof restoreAccountSchema>;
+export type DeleteAccountData = z.infer<typeof deleteAccountSchema>;
