@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -11,9 +12,11 @@ import {
 } from "lucide-react";
 import { AuthGuard } from "@/components/auth-guard";
 import { useUser, useLogout } from "@/hooks/use-auth";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 function DashboardSidebar() {
   const pathname = usePathname();
+  const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
   const { data: user } = useUser();
   const logout = useLogout();
   const items = [
@@ -79,14 +82,29 @@ function DashboardSidebar() {
             </div>
           </Link>
 
-          <button
-            onClick={() => logout.mutate()}
-            disabled={logout.isPending}
-            className="w-full flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-red-50 hover:text-red-600 disabled:opacity-50 cursor-pointer"
+          <ConfirmDialog
+            open={isLogoutDialogOpen}
+            onOpenChange={setIsLogoutDialogOpen}
+            title="Sair da conta"
+            description="Tem certeza que deseja encerrar sua sessao?"
+            confirmLabel="Sair"
+            cancelLabel="Cancelar"
+            onConfirm={() =>
+              logout.mutate(undefined, {
+                onSettled: () => setIsLogoutDialogOpen(false),
+              })
+            }
+            isPending={logout.isPending}
+            variant="destructive"
           >
-            <LogOut size={18} />
-            <span>Sair</span>
-          </button>
+            <button
+              type="button"
+              className="w-full flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-red-50 hover:text-red-600 disabled:opacity-50 cursor-pointer"
+            >
+              <LogOut size={18} />
+              <span>Sair</span>
+            </button>
+          </ConfirmDialog>
         </div>
       </div>
     </aside>

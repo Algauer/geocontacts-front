@@ -2,27 +2,23 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { MapPin, Phone, Pencil, Trash2, Loader2, CalendarDays } from "lucide-react";
+import { MapPin, Phone, Pencil, Trash2, CalendarDays } from "lucide-react";
 import { formatCpf, formatPhone, formatContactCreatedAt } from "@/lib/contact-format";
 import type { Contact } from "@/lib/contacts";
 import { useDeleteContact } from "@/hooks/use-contacts";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 type ContactCardProps = {
   contact: Contact;
 };
 
 export function ContactCard({ contact }: ContactCardProps) {
-  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const deleteContact = useDeleteContact();
 
-  function handleDelete(e: React.MouseEvent) {
-    e.stopPropagation();
-    if (!confirmDelete) {
-      setConfirmDelete(true);
-      return;
-    }
+  function handleDelete() {
     deleteContact.mutate(contact.id, {
-      onSettled: () => setConfirmDelete(false),
+      onSettled: () => setIsDeleteDialogOpen(false),
     });
   }
 
@@ -51,23 +47,25 @@ export function ContactCard({ contact }: ContactCardProps) {
           >
             <Pencil size={16} />
           </Link>
-          <button
-            onClick={handleDelete}
-            onBlur={() => setConfirmDelete(false)}
-            disabled={deleteContact.isPending}
-            className={`rounded-md p-1.5 transition-colors ${
-              confirmDelete
-                ? "text-destructive-foreground bg-destructive hover:bg-destructive/90"
-                : "text-muted-foreground hover:text-destructive hover:bg-muted"
-            }`}
-            title={confirmDelete ? "Confirmar exclusao" : "Excluir"}
+          <ConfirmDialog
+            open={isDeleteDialogOpen}
+            onOpenChange={setIsDeleteDialogOpen}
+            title="Excluir contato"
+            description={`Tem certeza que deseja excluir o contato ${contact.name}? Esta acao nao pode ser desfeita.`}
+            confirmLabel="Excluir"
+            cancelLabel="Cancelar"
+            onConfirm={handleDelete}
+            isPending={deleteContact.isPending}
+            variant="destructive"
           >
-            {deleteContact.isPending ? (
-              <Loader2 size={16} className="animate-spin" />
-            ) : (
+            <button
+              type="button"
+              className="rounded-md p-1.5 text-muted-foreground hover:text-destructive hover:bg-muted transition-colors"
+              title="Excluir"
+            >
               <Trash2 size={16} />
-            )}
-          </button>
+            </button>
+          </ConfirmDialog>
         </div>
       </div>
 
