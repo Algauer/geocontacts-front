@@ -82,9 +82,9 @@ function DashboardSidebar() {
           <button
             onClick={() => logout.mutate()}
             disabled={logout.isPending}
-            className="w-full inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors disabled:opacity-50"
+            className="w-full flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-red-50 hover:text-red-600 disabled:opacity-50 cursor-pointer"
           >
-            <LogOut size={15} />
+            <LogOut size={18} />
             <span>Sair</span>
           </button>
         </div>
