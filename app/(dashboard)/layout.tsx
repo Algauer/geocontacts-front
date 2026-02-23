@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  LayoutDashboard,
+  // LayoutDashboard,
   MapPin,
   Users,
   LogOut,
@@ -20,7 +20,7 @@ function DashboardSidebar() {
   const { data: user } = useUser();
   const logout = useLogout();
   const items = [
-    { href: "/", label: "Dashboard", icon: LayoutDashboard },
+    // { href: "/", label: "Dashboard", icon: LayoutDashboard },
     { href: "/contacts", label: "Contatos", icon: Users },
   ];
   const isAccountActive = pathname === "/account";
