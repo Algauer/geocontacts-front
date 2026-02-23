@@ -2,9 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { MapPin, Phone, Pencil, Trash2, Loader2, Map } from "lucide-react";
+import { MapPin, Phone, Pencil, Trash2, Loader2 } from "lucide-react";
 import { formatCpf, formatPhone } from "@/lib/contact-format";
-import { ContactMap } from "@/components/maps/contact-map";
 import type { Contact } from "@/lib/contacts";
 import { useDeleteContact } from "@/hooks/use-contacts";
 
@@ -14,10 +13,10 @@ type ContactCardProps = {
 
 export function ContactCard({ contact }: ContactCardProps) {
   const [confirmDelete, setConfirmDelete] = useState(false);
-  const [showMap, setShowMap] = useState(false);
   const deleteContact = useDeleteContact();
 
-  function handleDelete() {
+  function handleDelete(e: React.MouseEvent) {
+    e.stopPropagation();
     if (!confirmDelete) {
       setConfirmDelete(true);
       return;
@@ -29,8 +28,6 @@ export function ContactCard({ contact }: ContactCardProps) {
 
   const cpfFormatted = formatCpf(contact.cpf);
   const phoneFormatted = formatPhone(contact.phone);
-  const hasCoordinates =
-    contact.latitude !== null && contact.longitude !== null;
 
   return (
     <div className="rounded-lg border border-border bg-white p-4 hover:shadow-sm transition-shadow">
@@ -45,21 +42,9 @@ export function ContactCard({ contact }: ContactCardProps) {
         </div>
 
         <div className="flex items-center gap-1 shrink-0">
-          {hasCoordinates && (
-            <button
-              onClick={() => setShowMap((prev) => !prev)}
-              className={`rounded-md p-1.5 transition-colors ${
-                showMap
-                  ? "text-primary bg-primary/10"
-                  : "text-muted-foreground hover:text-primary hover:bg-muted"
-              }`}
-              title={showMap ? "Ocultar mapa" : "Ver no mapa"}
-            >
-              <Map size={16} />
-            </button>
-          )}
           <Link
             href={`/contacts/${contact.id}/edit`}
+            onClick={(e) => e.stopPropagation()}
             className="rounded-md p-1.5 text-muted-foreground hover:text-primary hover:bg-muted transition-colors"
             title="Editar"
           >
@@ -100,16 +85,6 @@ export function ContactCard({ contact }: ContactCardProps) {
           </span>
         </div>
       </div>
-
-      {showMap && hasCoordinates && (
-        <div className="mt-3">
-          <ContactMap
-            latitude={contact.latitude!}
-            longitude={contact.longitude!}
-            name={contact.name}
-          />
-        </div>
-      )}
     </div>
   );
 }
