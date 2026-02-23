@@ -1,0 +1,59 @@
+name: CI/CD - Build & Deploy Frontend
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # ==========================================
+  # Job 1: Lint & Build
+  # ==========================================
+  build:
+    name: Lint & Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build
+        env:
+          NEXT_PUBLIC_API_URL: https://geoapi.algauer.cloud/api
+          NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: 
+        run: npm run build
+
+  # Job 2: Deploy (só roda no push para main)
+  deploy:
+    name: Deploy para produção
+    runs-on: self-hosted
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    environment: production
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      - name: Gerar .env para o build
+        run: |
+          cat <<EOF > .env
+          NEXT_PUBLIC_API_URL=${{ vars.NEXT_PUBLIC_API_URL }}
+          NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=${{ secrets.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY }}
+          EOF
+
+      - name: Executar deploy
+        run: bash deploy.sh
