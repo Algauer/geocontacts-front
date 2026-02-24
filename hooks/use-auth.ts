@@ -157,10 +157,15 @@ export function useDeleteAccount() {
 
   return useMutation({
     mutationFn: (data: DeleteAccountData) => authApi.deleteAccount(data),
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
       queryClient.clear();
-      toast.success("Conta excluida. Voce pode restaurar em ate 7 dias.");
-      router.push("/restore-account");
+      if (variables.immediate) {
+        toast.success("Conta e dados removidos permanentemente.");
+        router.push("/login");
+      } else {
+        toast.success("Conta excluida. Você pode restaurar em ate 7 dias.");
+        router.push("/restore-account");
+      }
     },
     onError: (error: Error) => {
       if (error instanceof ApiError && error.status === 422) {
