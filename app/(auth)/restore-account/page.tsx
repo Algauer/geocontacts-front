@@ -39,7 +39,7 @@ export default function RestoreAccountPage() {
       <div className="mb-8">
         <h2 className="text-2xl font-bold">Restaurar conta</h2>
         <p className="text-muted-foreground mt-1">
-          Se sua conta foi excluida, voce pode restaurar em ate 7 dias.
+          Se sua conta foi excluida, você pode restaurar em ate 7 dias.
         </p>
       </div>
 

@@ -140,7 +140,7 @@ export default function ContactsPage() {
               <p className="text-sm">
                 {debouncedSearch
                   ? "Nenhum contato encontrado."
-                  : "Voce ainda nao tem contatos."}
+                  : "Você ainda nao tem contatos."}
               </p>
               {!debouncedSearch && (
                 <Link

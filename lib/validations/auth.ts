@@ -40,6 +40,7 @@ export const restoreAccountSchema = z.object({
 
 export const deleteAccountSchema = z.object({
   password: z.string().min(1, "Senha obrigatoria"),
+  immediate: z.boolean().optional(),
 });
 
 export type LoginData = z.infer<typeof loginSchema>;

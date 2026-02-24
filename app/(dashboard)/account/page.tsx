@@ -1,8 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AlertTriangle, Loader2, Trash2 } from "lucide-react";
+import { AlertTriangle, Loader2, Trash2, Clock, ShieldAlert } from "lucide-react";
 import {
   deleteAccountSchema,
   type DeleteAccountData,
@@ -10,7 +11,10 @@ import {
 import { useDeleteAccount } from "@/hooks/use-auth";
 import { PasswordInput } from "@/components/ui/password-input";
 
+type DeletionMode = "soft" | "immediate";
+
 export default function AccountPage() {
+  const [mode, setMode] = useState<DeletionMode>("soft");
   const deleteAccount = useDeleteAccount();
 
   const {
@@ -22,7 +26,7 @@ export default function AccountPage() {
   });
 
   function onSubmit(data: DeleteAccountData) {
-    deleteAccount.mutate(data);
+    deleteAccount.mutate({ ...data, immediate: mode === "immediate" });
   }
 
   return (
@@ -40,9 +44,64 @@ export default function AccountPage() {
           <div>
             <h2 className="font-semibold text-foreground">Excluir conta</h2>
             <p className="text-sm text-muted-foreground mt-1">
-              Sua conta e contatos serao desativados. Voce pode restaurar em ate
-              7 dias usando email e senha.
+              Escolha como deseja excluir sua conta e confirme com sua senha.
             </p>
+          </div>
+        </div>
+
+        <div className="mt-4 space-y-3">
+          <label className="block text-sm font-medium mb-1.5">
+            Modo de exclusao
+          </label>
+
+          <div className="grid gap-3 sm:grid-cols-2">
+            <button
+              type="button"
+              onClick={() => setMode("soft")}
+              className={`flex items-start gap-3 rounded-lg border p-4 text-left transition-colors ${
+                mode === "soft"
+                  ? "border-primary bg-primary/5 ring-2 ring-primary/30"
+                  : "border-input hover:border-primary/40"
+              }`}
+            >
+              <Clock
+                size={20}
+                className={`mt-0.5 shrink-0 ${mode === "soft" ? "text-primary" : "text-muted-foreground"}`}
+              />
+              <div>
+                <span className="text-sm font-medium text-foreground">
+                  Exclusão com periodo de arrependimento
+                </span>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Sua conta e contatos ficam desativados por 7 dias. Você pode
+                  restaurar tudo nesse período.
+                </p>
+              </div>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setMode("immediate")}
+              className={`flex items-start gap-3 rounded-lg border p-4 text-left transition-colors ${
+                mode === "immediate"
+                  ? "border-destructive bg-destructive/5 ring-2 ring-destructive/30"
+                  : "border-input hover:border-destructive/40"
+              }`}
+            >
+              <ShieldAlert
+                size={20}
+                className={`mt-0.5 shrink-0 ${mode === "immediate" ? "text-destructive" : "text-muted-foreground"}`}
+              />
+              <div>
+                <span className="text-sm font-medium text-foreground">
+                  Exclusao imediata e permanente
+                </span>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Todos os dados sao removidos da base de dados imediatamente.
+                  Essa acao e irreversivel.
+                </p>
+              </div>
+            </button>
           </div>
         </div>
 
@@ -75,11 +134,14 @@ export default function AccountPage() {
             ) : (
               <Trash2 size={16} />
             )}
-            {deleteAccount.isPending ? "Excluindo..." : "Excluir minha conta"}
+            {deleteAccount.isPending
+              ? "Excluindo..."
+              : mode === "immediate"
+                ? "Excluir permanentemente"
+                : "Excluir minha conta"}
           </button>
         </form>
       </section>
     </div>
   );
 }
-
