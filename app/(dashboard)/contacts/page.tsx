@@ -17,6 +17,7 @@ import {
 import { useContacts } from "@/hooks/use-contacts";
 import { ContactCard } from "@/components/contacts/contact-card";
 import { ContactsMap } from "@/components/maps/contacts-map";
+import { useSidebar } from "@/contexts/sidebar-context";
 
 export default function ContactsPage() {
   const [search, setSearch] = useState("");
@@ -29,6 +30,7 @@ export default function ContactsPage() {
     null
   );
   const [showMap, setShowMap] = useState(false);
+  const { setCollapsed } = useSidebar();
   const { data, isLoading } = useContacts({
     page,
     perPage,
@@ -59,7 +61,13 @@ export default function ContactsPage() {
           <h1 className="text-xl font-bold text-foreground">Contatos</h1>
           <div className="flex items-center gap-2">
             <button
-              onClick={() => setShowMap((prev) => !prev)}
+              onClick={() => {
+                setShowMap((prev) => {
+                  const next = !prev;
+                  if (next) setCollapsed(true);
+                  return next;
+                });
+              }}
               className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
                 showMap
                   ? "bg-primary/10 text-primary hover:bg-primary/20"
